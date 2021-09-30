@@ -119,6 +119,27 @@ class WC_REST_Orders_V2_Controller extends WC_REST_CRUD_Controller {
 
 		register_rest_route(
 			$this->namespace,
+			'/' . $this->rest_base . '/(?P<id>[\d]+)/shipping-methods',
+			array(
+				'args' => array(
+					'id' => array(
+						'description' => __( 'Unique identifier for the resource.', 'woocommerce' ),
+						'type'        => 'integer',
+					),
+				),
+				array(
+					'methods'  => WP_REST_Server::READABLE,
+					'callback' => array( $this, 'get_shipping_methods' ),
+					'permission_callback' => array( $this, 'get_item_permissions_check' ),
+					'args'                => array(
+						'context' => $this->get_context_param( array( 'default' => 'view' ) ),
+					),
+				),
+			)
+		);
+
+		register_rest_route(
+			$this->namespace,
 			'/' . $this->rest_base . '/batch',
 			array(
 				array(
@@ -130,6 +151,24 @@ class WC_REST_Orders_V2_Controller extends WC_REST_CRUD_Controller {
 				'schema' => array( $this, 'get_public_batch_schema' ),
 			)
 		);
+	}
+
+	function get_shipping_methods( $request ) {
+		$order = $this->get_object( (int) $request['id'] );
+
+		if ( ! $order || 0 === $order->get_id() ) {
+			return new WP_Error( "woocommerce_rest_{$this->post_type}_invalid_id", __( 'Invalid ID.', 'woocommerce' ), array( 'status' => 404 ) );
+		}
+
+		// TODO: Calculate shipping methods
+		$data     = [];
+		$response = rest_ensure_response( $data );
+
+		if ( $this->public ) {
+			$response->link_header( 'alternate', $this->get_permalink( $order ), array( 'type' => 'text/html' ) );
+		}
+
+		return $response;
 	}
 
 	/**
