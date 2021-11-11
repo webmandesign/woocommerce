@@ -19,6 +19,7 @@
   "devDependencies": {
     "@automattic/nx-composer": "^0.1.0",
     "@nrwl/cli": "latest",
+    "@nrwl/devkit": "^13.1.4",
     "@nrwl/linter": "^13.1.3",
     "@nrwl/tao": "latest",
     "@nrwl/web": "^13.1.3",
